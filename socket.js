@@ -10,7 +10,7 @@ app.use(express.static('public'))
 app.use(express.json());
 app.use(session({ secret: "thatissosecret", saveUninitialized: true, resave: true }));
 
-const io = require("socket.io")(5555)
+const io = require("socket.io")(PORT)
 app.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -47,7 +47,7 @@ app.post("/", function(req, res) {
 app.get("/chat", function(req, res) {
     if (!userExists(req.ip))
         return res.redirect("/")
-    return res.render('chat.ejs')
+    return res.render('chat.ejs', { PORT: PORT })
 })
 app.listen(PORT, function() {
     console.log("http://localhost:" + PORT);

@@ -1,6 +1,3 @@
-const socket = io("http://instantmsgapp.herokuapp.com:5555")
-
-
 var sendChannel,
     receiveChannel,
     chatWindow = document.querySelector('.chat-window'),
