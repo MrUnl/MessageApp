@@ -17,10 +17,12 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 const users = [];
 io.on("connection", socket => {
+    socket.broadcast.emit("user-joined", { user: users.find(user => user.ip === socket.handshake.address).username })
     console.log(users);
     console.log("User connected");
     socket.on("disconnect", () => {
         console.log("User disconnect");
+        socket.broadcast.emit("user-disconnected", { user: users.find(user => user.ip === socket.handshake.address).username })
     })
     socket.on("message-sent", message => {
         console.log(message);
@@ -33,12 +35,16 @@ function userExists(ip) {
     return users.filter(user => user.ip === ip).length > 0
 }
 app.get("/", function(req, res) {
-
+    if (userExists(req.ip))
+        return res.redirect("/")
     res.render('index.ejs');
 });
 app.post("/", function(req, res) {
     if (req.body.username) {
-        users.push({ ip: req.ip, username: req.body.username })
+        if (userExists(req.ip))
+            users[users.findIndex(user => user.ip === req.ip)].username = req.body.username;
+        else
+            users.push({ ip: req.ip, username: req.body.username })
         return res.redirect("/chat");
     }
     console.log(users);
@@ -47,7 +53,7 @@ app.post("/", function(req, res) {
 app.get("/chat", function(req, res) {
     if (!userExists(req.ip))
         return res.redirect("/")
-    return res.render('chat.ejs', { PORT: PORT })
+    return res.render('chat.ejs')
 })
 app.listen(PORT, function() {
     console.log("http://localhost:" + PORT);

@@ -1,3 +1,6 @@
+const socket = io("http://192.168.1.23:5555")
+
+
 var sendChannel,
     receiveChannel,
     chatWindow = document.querySelector('.chat-window'),
@@ -5,7 +8,14 @@ var sendChannel,
     chatThread = document.querySelector('.chat-thread');
 
 socket.on("message-received", function(data) {
+    console.log("Mesaj geldi breh");
     handleMessage(data.message, data.user || "Ataberk ASLAN");
+});
+socket.on("user-joined", function(data) {
+    console.log(data.user + " chate katıldı.");
+});
+socket.on("user-disconnected", function(data) {
+    console.log(data.user + " chatten ayrıldı.");
 });
 // On form submit, send message
 chatWindow.onsubmit = function(e) {
