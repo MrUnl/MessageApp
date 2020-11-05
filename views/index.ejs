@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet" </head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans">
+    <style>
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            margin-top: 50px;
+            height: 48px;
+        }
+        
+        input[type="text"] {
+            -webkit-box-direction: normal;
+            font: 24px/48px 'Noto Sans', sans-serif;
+            background: none;
+            border-top-left-radius: 48px;
+            border-bottom-left-radius: 48px;
+            padding-left: 15px;
+            border: 1px solid #19939333;
+            outline: none;
+            background-image: none;
+            background-color: initial;
+            color: rgb(57, 246, 227);
+            border-color: rgba(30, 174, 174, 0.2);
+            outline-color: initial;
+            flex: 8;
+        }
+        
+        input[type="submit"] {
+            flex: 1;
+            -webkit-box-direction: normal;
+            font: 18px/48px 'Noto Sans', sans-serif;
+            background: none;
+            border-top-right-radius: 48px;
+            border-bottom-right-radius: 48px;
+            padding-left: 15px;
+            outline: none;
+            border: none;
+            cursor: pointer;
+            color: rgb(57, 246, 227);
+            background-color: rgba(30, 174, 174, 0.2);
+            outline-color: initial;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container">
+        <form action="/" method="post">
+            <input type="text" name="username" placeholder="Kullanıcı Adı">
+            <input type="submit" value="Giriş Yap">
+        </form>
+    </div>
+</body>
+
+</html>
