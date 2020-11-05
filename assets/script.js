@@ -1,4 +1,4 @@
-const socket = io("http://192.168.1.23:5555")
+const socket = io("http://instantmsgapp.herokuapp.com:5555")
 
 
 var sendChannel,
