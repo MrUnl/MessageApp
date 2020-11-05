@@ -10,7 +10,7 @@ app.use(express.static('public'))
 app.use(express.json());
 app.use(session({ secret: "thatissosecret", saveUninitialized: true, resave: true }));
 
-const io = require("socket.io")(PORT)
+const io = require("socket.io")(5555)
 app.use(bodyParser.urlencoded({
     extended: true
 }));
