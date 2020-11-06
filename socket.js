@@ -4,16 +4,17 @@ const bodyParser = require('body-parser');
 const session = require('express-session')
 const http = require('http')
 const cors = require("cors")
-
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
 
 const PORT = process.env.PORT || 80
 
 app.use(express.static("assets"))
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
-app.use(express.static('public'))
 app.use(express.json());
-app.use(session({ secret: "thatissosecret", saveUninitialized: true, resave: true }));
+app.use(session({ secret: process.env.SECRET, saveUninitialized: true, resave: true }));
 app.use(cors())
 const io = require("socket.io")(5555)
 
