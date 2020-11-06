@@ -2,58 +2,56 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const session = require('express-session')
-const PORT = process.env.PORT || 3000
+const http = require('http')
+const cors = require("cors")
+
+
+const PORT = process.env.PORT || 80
+
 app.use(express.static("assets"))
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static('public'))
 app.use(express.json());
 app.use(session({ secret: "thatissosecret", saveUninitialized: true, resave: true }));
-
+app.use(cors())
 const io = require("socket.io")(5555)
+
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
-const users = [];
 io.on("connection", socket => {
-    socket.broadcast.emit("user-joined", { user: users.find(user => user.ip === socket.handshake.address).username })
-    console.log(users);
     console.log("User connected");
+    socket.on("connected", username => {
+        socket.broadcast.emit("user-joined", username);
+    })
+    socket.on("disconnected", username => {
+        socket.broadcast.emit("user-disconnected", username);
+    })
     socket.on("disconnect", () => {
         console.log("User disconnect");
-        socket.broadcast.emit("user-disconnected", { user: users.find(user => user.ip === socket.handshake.address).username })
     })
-    socket.on("message-sent", message => {
-        console.log(message);
-        console.log(socket.handshake.address);
-        socket.broadcast.emit("message-received", { message, user: users.find(user => user.ip === socket.handshake.address).username });
+    socket.on("message-sent", ({ message, username }) => {
+        console.log(`${username}: ${message}`);
+        socket.broadcast.emit("message-received", { message, user: username });
     })
 })
 
-function userExists(ip) {
-    return users.filter(user => user.ip === ip).length > 0
-}
 app.get("/", function(req, res) {
-    if (userExists(req.ip))
-        return res.redirect("/")
     res.render('index.ejs');
 });
 app.post("/", function(req, res) {
     if (req.body.username) {
-        if (userExists(req.ip))
-            users[users.findIndex(user => user.ip === req.ip)].username = req.body.username;
-        else
-            users.push({ ip: req.ip, username: req.body.username })
+        req.session.username = req.body.username;
         return res.redirect("/chat");
     }
-    console.log(users);
     return res.redirect("/")
 })
 app.get("/chat", function(req, res) {
-    if (!userExists(req.ip))
+    if (!req.session.username)
         return res.redirect("/")
-    return res.render('chat.ejs')
+    return res.render('chat.ejs', { username: req.session.username })
 })
 app.listen(PORT, function() {
     console.log("http://localhost:" + PORT);

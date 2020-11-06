@@ -1,6 +1,3 @@
-const socket = io("http://192.168.1.23:5555")
-
-
 var sendChannel,
     receiveChannel,
     chatWindow = document.querySelector('.chat-window'),
@@ -8,14 +5,19 @@ var sendChannel,
     chatThread = document.querySelector('.chat-thread');
 
 socket.on("message-received", function(data) {
-    console.log("Mesaj geldi breh");
     handleMessage(data.message, data.user || "Ataberk ASLAN");
 });
-socket.on("user-joined", function(data) {
-    console.log(data.user + " chate katıldı.");
+socket.on("user-joined", function(username) {
+    showAlert(`${username} katıldı.`);
 });
-socket.on("user-disconnected", function(data) {
-    console.log(data.user + " chatten ayrıldı.");
+socket.on("user-disconnected", function(username) {
+    showAlert(`${username} ayrıldı.`);
+});
+socket.on("connect", function() {
+    socket.emit("connected", username)
+});
+socket.on("disconnect", function() {
+    socket.emit("disconnected", username)
 });
 // On form submit, send message
 chatWindow.onsubmit = function(e) {
@@ -26,7 +28,24 @@ chatWindow.onsubmit = function(e) {
 };
 
 function sendMessage(message) {
-    socket.emit("message-sent", message);
+    socket.emit("message-sent", { message, username });
+}
+/**
+ * 
+ * @param {String} message 
+ * @param {String} user
+ * @returns {void} 
+ */
+function showAlert(message) {
+    const chatNewThread = document.createElement('li'),
+        chatNewMessage = document.createTextNode(message);
+    // Add message to chat thread and scroll to bottom
+    chatNewThread.classList.add("alert");
+    chatNewThread.appendChild(chatNewMessage);
+    chatThread.appendChild(chatNewThread);
+    chatThread.scrollTop = chatThread.scrollHeight;
+
+    // Clear text value
 }
 
 function handleMessage(message, user = "you") {

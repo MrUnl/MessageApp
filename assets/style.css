@@ -60,7 +60,7 @@ body {
   float: left;
   margin-left: 80px;
   color: #0EC879;
-  display: inline-block;
+  display: block;
   padding: 16px 40px 16px 20px;
   max-width: 50%;
   word-wrap: break-word;
@@ -105,6 +105,26 @@ body {
                 left: 0; */
   margin-bottom: 5px;
   color: #0AD5C1;
+}
+
+.chat-thread li.alert {
+  background-color: #191b3b;
+  max-width: none;
+  width: 85%;
+  height: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  float: none;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .chat-window {
@@ -157,5 +177,16 @@ body {
   }
   100% {
     margin-right: 0;
+  }
+}
+
+@media (max-width: 750px) {
+  .container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
   }
 }

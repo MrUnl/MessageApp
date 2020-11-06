@@ -59,7 +59,7 @@ body {
         float: left;
         margin-left: $chat-thread-offset;
         color: #0EC879;
-        display: inline-block;
+        display: block;
         padding: 16px 40px 16px 20px;
         max-width: 50%;
         word-wrap: break-word;
@@ -102,6 +102,19 @@ body {
                 color: #0AD5C1;
             }
         }
+        &.alert {
+            background-color: #191b3b;
+            max-width: none;
+            width: 85%;
+            height: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            float: none;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
 }
 
@@ -136,5 +149,16 @@ body {
     }
     100% {
         margin-right: 0;
+    }
+}
+
+@media (max-width:750px) {
+    .container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
     }
 }
