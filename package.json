@@ -4,8 +4,8 @@
     "description": "Instant message app using NodeJS and socket.io",
     "main": "socket.js",
     "scripts": {
-        "devStart": "nodemon socket.js",
-        "start": "node socket.js"
+        "devStart": "nodemon server.js",
+        "start": "node server.js"
     },
     "repository": {
         "type": "git",

@@ -1,71 +1,66 @@
-var sendChannel,
-    receiveChannel,
-    chatWindow = document.querySelector('.chat-window'),
-    chatWindowMessage = document.querySelector('.chat-window-message'),
-    chatThread = document.querySelector('.chat-thread');
+const socket = io('http://localhost:5000')
+const messageContainer = document.querySelector('.chat-thread')
+const roomContainer = document.getElementById('room-container')
+const messageForm = document.querySelector('.chat-window')
+const messageInput = document.querySelector('.chat-window-message')
 
-socket.on("message-received", function(data) {
-    handleMessage(data.message, data.user || "Ataberk ASLAN");
-});
-socket.on("user-joined", function(username) {
-    showAlert(`${username} katıldı.`);
-});
-socket.on("user-disconnected", function(username) {
-    showAlert(`${username} ayrıldı.`);
-});
-socket.on("connect", function() {
-    socket.emit("connected", username)
-});
-socket.on("disconnect", function() {
-    socket.emit("disconnected", username)
-});
-// On form submit, send message
-chatWindow.onsubmit = function(e) {
-    e.preventDefault();
-    sendMessage(chatWindowMessage.value);
-    handleMessage(chatWindowMessage.value);
-    return false;
-};
-
-function sendMessage(message) {
-    socket.emit("message-sent", { message, username });
-}
-/**
- * 
- * @param {String} message 
- * @param {String} user
- * @returns {void} 
- */
-function showAlert(message) {
-    const chatNewThread = document.createElement('li'),
-        chatNewMessage = document.createTextNode(message);
-    // Add message to chat thread and scroll to bottom
-    chatNewThread.classList.add("alert");
-    chatNewThread.appendChild(chatNewMessage);
-    chatThread.appendChild(chatNewThread);
-    chatThread.scrollTop = chatThread.scrollHeight;
-
-    // Clear text value
-}
-
-function handleMessage(message, user = "you") {
-    if (message !== "") {
-        const chatNewThread = document.createElement('li'),
-            chatNewMessage = document.createTextNode(message);
-        chatNewThread.classList.add(user.toLocaleLowerCase().replace(" ", ""));
-        // Add message to chat thread and scroll to bottom
-        if (user !== "you") {
-            const usernameField = document.createElement("span");
-            usernameField.innerHTML = user;
-            chatNewThread.appendChild(usernameField);
-        }
-        chatNewThread.appendChild(chatNewMessage);
-        chatThread.appendChild(chatNewThread);
-        chatThread.scrollTop = chatThread.scrollHeight;
-
-        // Clear text value
-        chatWindowMessage.value = '';
-    } else {
-        alert("Mesaj alanını boş bırakmayın!")
+if (messageForm != null) {
+    let name = prompt('Kullanıcı Adı?')
+    while (!name) {
+        name = prompt('Kullanıcı Adı?')
     }
+    appendAlert("Katıldınız");
+    socket.emit('new-user', roomName, name)
+
+    messageForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const message = messageInput.value
+        appendMessage(`${message}`)
+        socket.emit('send-chat-message', roomName, message)
+        messageInput.value = ''
+        return false;
+    })
+}
+
+socket.on('room-created', room => {
+    const roomElement = document.createElement('div')
+    roomElement.innerText = room
+    const roomLink = document.createElement('a')
+    roomLink.href = `/${room}`
+    roomLink.innerText = 'join'
+    roomContainer.append(roomElement)
+    roomContainer.append(roomLink)
+})
+
+socket.on('chat-message', data => {
+    console.log(data);
+    appendMessage(data.message, false, data.name)
+})
+
+socket.on('user-connected', name => {
+    appendAlert(`${name} katıldı.`)
+})
+
+socket.on('user-disconnected', name => {
+    appendAlert(`${name} ayrıldı.`)
+})
+
+function appendAlert(message) {
+    const messageElement = document.createElement('li')
+    messageElement.classList.add("alert");
+    messageElement.innerText = message
+    messageContainer.append(messageElement)
+}
+
+function appendMessage(message, you = true, user = null) {
+    const messageElement = document.createElement('li')
+    if (user !== null) {
+        const userElement = document.createElement('span');
+        userElement.innerText = user;
+        messageElement.append(userElement)
+    }
+    if (you)
+        messageElement.classList.add('you');
+    messageElement.innerHTML += message
+    messageContainer.append(messageElement)
 }

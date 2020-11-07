@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Message App</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet" </head>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans">
     <style>
         form {
@@ -34,8 +34,9 @@
             flex: 8;
         }
         
-        input[type="submit"] {
-            flex: 1;
+        button[type="submit"] {
+            flex: 2;
+            text-align: center;
             -webkit-box-direction: normal;
             font: 18px/48px 'Noto Sans', sans-serif;
             background: none;
@@ -55,9 +56,17 @@
 
 <body>
     <div class="container">
-        <form action="/" method="post">
-            <input type="text" name="username" placeholder="Kullanıcı Adı">
-            <input type="submit" value="Giriş Yap">
+        <div id="room-container">
+            <% Object.keys(rooms).forEach(room => { %>
+                <div>
+                    <%= room %>
+                </div>
+                <a href="/room/<%= room %>">Join</a>
+                <% }) %>
+        </div>
+        <form action="/room" method="POST">
+            <input name="room" autocomplete="false" type="text" required>
+            <button type="submit">New Room</button>
         </form>
     </div>
 </body>
