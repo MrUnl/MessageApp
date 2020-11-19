@@ -34,6 +34,34 @@
             flex: 8;
         }
         
+        ul {
+            width: 100%;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        }
+        
+        ul li {
+            color: #e8e6e3;
+            margin: 0 auto;
+            -webkit-box-direction: normal;
+            width: 50%;
+            display: flex;
+            flex-direction: row;
+            margin-top: 50px;
+            height: 48px;
+        }
+        
+        ul li span {
+            background-color: rgb(20 22 47);
+            color: rgb(67 242 168);
+            padding-left: 20px;
+            flex: 8;
+            font: 18px/48px 'Noto Sans', sans-serif;
+        }
+        
+        ul li a,
         button[type="submit"] {
             flex: 2;
             text-align: center;
@@ -50,25 +78,35 @@
             background-color: rgba(30, 174, 174, 0.2);
             outline-color: initial;
         }
+        
+        ul li a {
+            text-decoration: none;
+            border-radius: 0;
+        }
     </style>
 </head>
 
 
 <body>
     <div class="container">
-        <div id="room-container">
+        <ul id="room-container">
             <% Object.keys(rooms).forEach(room => { %>
-                <div>
-                    <%= room %>
-                </div>
-                <a href="/room/<%= room %>">Join</a>
+                <li>
+                    <span>
+                        <%= room %>
+                    </span>
+                    <a href="/room/<%= room %>">Katıl</a>
+
+                </li>
                 <% }) %>
-        </div>
+        </ul>
         <form action="/room" method="POST">
             <input name="room" autocomplete="false" type="text" required>
-            <button type="submit">New Room</button>
+            <button type="submit">Yeni Oda</button>
         </form>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
+    <script src="/script.js"></script>
 </body>
 
 </html>

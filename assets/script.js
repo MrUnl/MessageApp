@@ -23,13 +23,15 @@ if (messageForm != null) {
 }
 
 socket.on('room-created', room => {
-    const roomElement = document.createElement('div')
-    roomElement.innerText = room
+    const roomElement = document.createElement('li')
+    const roomName = document.createElement('span')
+    roomName.innerHTML = room;
     const roomLink = document.createElement('a')
     roomLink.href = `/${room}`
-    roomLink.innerText = 'join'
+    roomLink.innerText = 'Katıl'
+    roomElement.appendChild(roomName)
+    roomElement.appendChild(roomLink)
     roomContainer.append(roomElement)
-    roomContainer.append(roomLink)
 })
 
 socket.on('chat-message', data => {
@@ -40,7 +42,20 @@ socket.on('chat-message', data => {
 socket.on('user-connected', name => {
     appendAlert(`${name} katıldı.`)
 })
-
+socket.on('room-deleted', rooms => {
+    roomContainer.innerHTML = "";
+    Object.keys(rooms).forEach(room => {
+        const roomElement = document.createElement('li')
+        const roomName = document.createElement('span')
+        roomName.innerHTML = room;
+        const roomLink = document.createElement('a')
+        roomLink.href = `/room/${room}`
+        roomLink.innerText = 'Katıl'
+        roomElement.appendChild(roomName)
+        roomElement.appendChild(roomLink)
+        roomContainer.append(roomElement)
+    })
+})
 socket.on('user-disconnected', name => {
     appendAlert(`${name} ayrıldı.`)
 })

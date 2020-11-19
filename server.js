@@ -12,7 +12,7 @@ app.use(cors())
 const rooms = {}
 
 app.get('/', (req, res) => {
-    res.render('index', { rooms: rooms })
+    res.render('index', { rooms })
 })
 
 app.post('/room', (req, res) => {
@@ -47,6 +47,14 @@ io.on('connection', socket => {
         getUserRooms(socket).forEach(room => {
             socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
             delete rooms[room].users[socket.id]
+            console.log(Object.keys(rooms[room].users).length);
+            if (Object.keys(rooms[room].users).length === 0) {
+                console.log("Room deleted");
+                delete rooms[room];
+                console.log(rooms)
+                io.emit("room-deleted", rooms)
+            }
+            socket.disconnect();
         })
     })
 })
