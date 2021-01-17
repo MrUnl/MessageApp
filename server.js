@@ -19,10 +19,10 @@ app.post('/room', (req, res) => {
     if (rooms[req.body.room] != null) {
         return res.redirect('/')
     }
-    rooms[req.body.room] = { users: {} }
+    rooms[req.body.room] = { users: {},messages:[] }
     res.redirect("/room/" + req.body.room)
         // Send message that new room was created
-    io.emit('room-created', req.body.room)
+    io.emit('room-created', {room:req.body.room,users:rooms[req.body.room].users})
 })
 
 app.get('/room/:room', (req, res) => {
@@ -38,22 +38,26 @@ io.on('connection', socket => {
     socket.on('new-user', (room, name) => {
         socket.join(room)
         rooms[room].users[socket.id] = name
+        io.emit("user-count-update",{room,count:Object.keys(rooms[room].users).length})
         socket.to(room).broadcast.emit('user-connected', name)
     })
     socket.on('send-chat-message', (room, message) => {
+        console.log(rooms);
+        rooms[room].messages.push({message,name:rooms[room].users[socket.id]})
         socket.to(room).broadcast.emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
     })
     socket.on('disconnect', () => {
         getUserRooms(socket).forEach(room => {
             socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
             delete rooms[room].users[socket.id]
-            console.log(Object.keys(rooms[room].users).length);
+            io.emit("user-count-update",{room,count:Object.keys(rooms[room].users).length})
             if (Object.keys(rooms[room].users).length === 0) {
                 console.log("Room deleted");
                 delete rooms[room];
                 console.log(rooms)
                 io.emit("room-deleted", rooms)
             }
+            
             socket.disconnect();
         })
     })
